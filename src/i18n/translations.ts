@@ -537,7 +537,10 @@ const translations = {
       received: 'Received',
     },
   },
-} as const;
+};
 
-export type TranslationKey = typeof translations.sk;
-export default translations;
+type Translations = typeof translations;
+export type TranslationKey = DeepStringRecord<Translations['sk']>;
+
+const typedTranslations: Record<Lang, TranslationKey> = translations;
+export default typedTranslations;
