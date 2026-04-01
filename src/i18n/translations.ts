@@ -1,5 +1,9 @@
 export type Lang = 'sk' | 'en';
 
+type DeepStringRecord<T> = {
+  [K in keyof T]: T[K] extends string ? string : DeepStringRecord<T[K]>;
+};
+
 const translations = {
   sk: {
     brand: 'Rows & Flows',
