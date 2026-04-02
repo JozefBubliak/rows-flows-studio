@@ -90,6 +90,15 @@ export function AppSidebar() {
           </NavLink>
         </SidebarMenuButton>
 
+        {/* Landing / About */}
+        <NavLink
+          to="/"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+        >
+          <Home className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>{lang === 'sk' ? 'O službe' : 'About'}</span>}
+        </NavLink>
+
         {/* Logout */}
         <NavLink
           to="/login"
