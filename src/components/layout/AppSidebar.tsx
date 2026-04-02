@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  LayoutDashboard, FileText, ClipboardList, Car, Receipt, User, LogOut, Globe,
+  LayoutDashboard, FileText, ClipboardList, Car, Receipt, User, LogOut, Globe, Home,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
