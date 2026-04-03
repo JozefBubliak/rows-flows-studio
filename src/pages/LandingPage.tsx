@@ -251,7 +251,7 @@ export default function LandingPage() {
               <div className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <a href="mailto:excelexpertsolutions.sk@gmail.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="mailto:hello@rowsandflows.eu" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     {l.contactEmail}
                   </a>
                 </div>

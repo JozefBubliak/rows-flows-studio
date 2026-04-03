@@ -40,7 +40,7 @@ export default function LoginPage() {
             </blockquote>
             <div className="text-sm opacity-60 space-y-1">
               <p>Vlada Clementisa 3, Prešov, SK</p>
-              <p>excelexpertsolutions.sk@gmail.com</p>
+              <p>support@pracovneprikazy.sk</p>
               <p>+421 944 133 167</p>
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="p-6 text-center text-xs text-muted-foreground space-y-1">
           <p className="font-medium">Rows & Flows · Data & Automation Studio</p>
-          <p>excelexpertsolutions.sk@gmail.com · +421 944 133 167</p>
+          <p>support@pracovneprikazy.sk · +421 944 133 167</p>
         </div>
       </div>
     </div>
