@@ -1,4 +1,4 @@
-export type Lang = 'sk' | 'en';
+export type Lang = 'sk' | 'en' | 'de' | 'cs' | 'uk' | 'pl' | 'ru';
 
 type DeepStringRecord<T> = {
   [K in keyof T]: T[K] extends string ? string : DeepStringRecord<T[K]>;
@@ -644,5 +644,154 @@ const translations = {
 type Translations = typeof translations;
 export type TranslationKey = DeepStringRecord<Translations['sk']>;
 
-const typedTranslations: Record<Lang, TranslationKey> = translations;
+const typedTranslations: Record<Lang, TranslationKey> = {
+  sk: translations.sk,
+  en: translations.en,
+  cs: {
+    ...translations.sk,
+    login: {
+      ...translations.sk.login,
+      subtitle: 'Vítejte v Rows & Flows',
+      signInMicrosoft: 'Přihlásit se přes Microsoft',
+      signInEmail: 'Přihlásit se e-mailem',
+      forgotPassword: 'Zapomenuté heslo?',
+      help: 'Potřebujete pomoc?',
+      noAccess: 'Nemáte přístup k této organizaci.',
+      pendingActivation: 'Váš účet čeká na aktivaci.',
+      loginFailed: 'Přihlášení se nezdařilo. Zkuste to znovu.',
+    },
+    nav: {
+      ...translations.sk.nav,
+      dashboard: 'Přehled',
+      travelOrders: 'Cestovní příkazy',
+      travelReports: 'Cestovní zprávy',
+      vehicles: 'Vozidla',
+      settlement: 'Vyúčtování',
+      logout: 'Odhlásit se',
+    },
+    common: {
+      ...translations.sk.common,
+      loading: 'Načítání...',
+    },
+  },
+  de: {
+    ...translations.en,
+    brand: 'Rows & Flows',
+    subtitle: 'Data & Automation Studio',
+    login: {
+      ...translations.en.login,
+      title: 'Anmelden',
+      subtitle: 'Willkommen bei Rows & Flows',
+      signInMicrosoft: 'Mit Microsoft anmelden',
+      signInEmail: 'Mit E-Mail anmelden',
+      forgotPassword: 'Passwort vergessen?',
+      help: 'Benötigen Sie Hilfe?',
+      noAccess: 'Sie haben keinen Zugriff auf diese Organisation.',
+      pendingActivation: 'Ihr Konto wartet auf die Aktivierung.',
+      loginFailed: 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+    },
+    nav: {
+      ...translations.en.nav,
+      dashboard: 'Übersicht',
+      travelOrders: 'Reiseanträge',
+      travelReports: 'Reiseberichte',
+      vehicles: 'Fahrzeuge',
+      settlement: 'Abrechnung',
+      profile: 'Profil',
+      logout: 'Abmelden',
+    },
+    common: {
+      ...translations.en.common,
+      loading: 'Wird geladen...',
+    },
+  },
+  uk: {
+    ...translations.en,
+    login: {
+      ...translations.en.login,
+      title: 'Увійти',
+      subtitle: 'Ласкаво просимо до Rows & Flows',
+      signInMicrosoft: 'Увійти через Microsoft',
+      signInEmail: 'Увійти через e-mail',
+      forgotPassword: 'Забули пароль?',
+      help: 'Потрібна допомога?',
+      noAccess: 'У вас немає доступу до цієї організації.',
+      pendingActivation: 'Ваш обліковий запис очікує активації.',
+      loginFailed: 'Не вдалося увійти. Спробуйте ще раз.',
+    },
+    nav: {
+      ...translations.en.nav,
+      dashboard: 'Огляд',
+      travelOrders: 'Накази на відрядження',
+      travelReports: 'Звіти про відрядження',
+      vehicles: 'Транспорт',
+      settlement: 'Розрахунок',
+      profile: 'Профіль',
+      logout: 'Вийти',
+    },
+    common: {
+      ...translations.en.common,
+      loading: 'Завантаження...',
+    },
+  },
+  pl: {
+    ...translations.en,
+    login: {
+      ...translations.en.login,
+      title: 'Zaloguj się',
+      subtitle: 'Witamy w Rows & Flows',
+      signInMicrosoft: 'Zaloguj się przez Microsoft',
+      signInEmail: 'Zaloguj się e-mailem',
+      forgotPassword: 'Nie pamiętasz hasła?',
+      help: 'Potrzebujesz pomocy?',
+      noAccess: 'Nie masz dostępu do tej organizacji.',
+      pendingActivation: 'Twoje konto oczekuje na aktywację.',
+      loginFailed: 'Logowanie nie powiodło się. Spróbuj ponownie.',
+    },
+    nav: {
+      ...translations.en.nav,
+      dashboard: 'Przegląd',
+      travelOrders: 'Polecenia wyjazdu',
+      travelReports: 'Raporty z podróży',
+      vehicles: 'Pojazdy',
+      settlement: 'Rozliczenie',
+      profile: 'Profil',
+      logout: 'Wyloguj się',
+    },
+    common: {
+      ...translations.en.common,
+      loading: 'Ładowanie...',
+    },
+  },
+  ru: {
+    ...translations.en,
+    login: {
+      ...translations.en.login,
+      title: 'Войти',
+      subtitle: 'Добро пожаловать в Rows & Flows',
+      signInMicrosoft: 'Войти через Microsoft',
+      signInEmail: 'Войти по e-mail',
+      forgotPassword: 'Забыли пароль?',
+      help: 'Нужна помощь?',
+      noAccess: 'У вас нет доступа к этой организации.',
+      pendingActivation: 'Ваш аккаунт ожидает активации.',
+      loginFailed: 'Не удалось войти. Попробуйте снова.',
+    },
+    nav: {
+      ...translations.en.nav,
+      dashboard: 'Обзор',
+      travelOrders: 'Командировочные поручения',
+      travelReports: 'Отчёты о поездках',
+      vehicles: 'Транспорт',
+      settlement: 'Расчёт',
+      profile: 'Профиль',
+      logout: 'Выйти',
+    },
+    common: {
+      ...translations.en.common,
+      loading: 'Загрузка...',
+    },
+  },
+};
+
 export default typedTranslations;

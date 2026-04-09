@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLanguage } from '@/i18n/LanguageContext';
+import { languageMeta, supportedLangs, useLanguage, isSupportedLangParam } from '@/i18n/LanguageContext';
+import type { Lang } from '@/i18n/translations';
 import {
   ArrowRight,
   BarChart3,
@@ -17,6 +18,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CircularOperationsClock } from '@/components/marketing/CircularOperationsClock';
 import logoSrc from '@/assets/logo-rows-flows.png';
 import heroLogoSrc from '@/assets/logo-rows-flows-hero.png';
 import dataWaveSrc from '@/assets/rf-hero-grid.png';
@@ -269,25 +271,120 @@ const landingContent = {
   },
 } as const;
 
+const landingLocalizedContent: Record<Lang, typeof landingContent.sk> = {
+  sk: landingContent.sk,
+  en: landingContent.en,
+  cs: {
+    ...landingContent.sk,
+    nav: [
+      { label: 'Služby', id: 'services' },
+      { label: 'Jak pracuji', id: 'process' },
+      { label: 'Ceník', id: 'pricing' },
+      { label: 'Kontakt', id: 'contact' },
+    ],
+    navCta: 'Konzultace',
+    loginCta: 'Klientská zóna',
+    titleTail: 'které šetří čas.',
+    note: 'EN/DE/PL pouze písemně. SK/CZ SOS po 16:00.',
+  },
+  de: {
+    ...landingContent.en,
+    nav: [
+      { label: 'Leistungen', id: 'services' },
+      { label: 'Prozess', id: 'process' },
+      { label: 'Preise', id: 'pricing' },
+      { label: 'Kontakt', id: 'contact' },
+    ],
+    navCta: 'Beratung',
+    loginCta: 'Kundenbereich',
+    overline: 'Datensysteme & Workflow-Automatisierung',
+    titleTail: 'die Zeit sparen.',
+    primaryCta: 'Kostenlose 20-Minuten-Beratung',
+    secondaryCta: 'SOS: schnelle Hilfe heute',
+    trustLabel: 'Im Einsatz mit',
+    aboutTitle: 'Manuelle Abläufe werden zu sauberen, verlässlichen Workflows.',
+    serviceLabel: 'Was ich liefere',
+    processLabel: 'So arbeite ich',
+    pricingLabel: 'Zusammenarbeitsmodelle',
+    supportLabel: 'Support',
+    contactTitle: 'Lassen Sie uns Ihren Prozess gemeinsam prüfen.',
+  },
+  uk: {
+    ...landingContent.en,
+    nav: [
+      { label: 'Послуги', id: 'services' },
+      { label: 'Процес', id: 'process' },
+      { label: 'Ціни', id: 'pricing' },
+      { label: 'Контакт', id: 'contact' },
+    ],
+    navCta: 'Консультація',
+    loginCta: 'Клієнтська зона',
+    titleTail: 'які економлять час.',
+    primaryCta: 'Безкоштовна 20-хв консультація',
+    secondaryCta: 'SOS: термінова допомога сьогодні',
+    trustLabel: 'Працюю з',
+    processLabel: 'Як я працюю',
+    pricingLabel: 'Формати співпраці',
+    supportLabel: 'Підтримка',
+    contactTitle: 'Давайте розберемо ваш процес наживо.',
+  },
+  pl: {
+    ...landingContent.en,
+    nav: [
+      { label: 'Usługi', id: 'services' },
+      { label: 'Proces', id: 'process' },
+      { label: 'Cennik', id: 'pricing' },
+      { label: 'Kontakt', id: 'contact' },
+    ],
+    navCta: 'Konsultacja',
+    loginCta: 'Strefa klienta',
+    titleTail: 'które oszczędzają czas.',
+    primaryCta: 'Bezpłatna konsultacja 20 min',
+    secondaryCta: 'SOS: szybka pomoc dziś',
+    trustLabel: 'Pracuję z',
+    processLabel: 'Jak pracuję',
+    pricingLabel: 'Formy współpracy',
+    supportLabel: 'Wsparcie',
+    contactTitle: 'Przejdźmy wspólnie przez Twój proces.',
+  },
+  ru: {
+    ...landingContent.en,
+    nav: [
+      { label: 'Услуги', id: 'services' },
+      { label: 'Процесс', id: 'process' },
+      { label: 'Цены', id: 'pricing' },
+      { label: 'Контакт', id: 'contact' },
+    ],
+    navCta: 'Консультация',
+    loginCta: 'Клиентская зона',
+    titleTail: 'которые экономят время.',
+    primaryCta: 'Бесплатная консультация 20 минут',
+    secondaryCta: 'SOS: срочная помощь сегодня',
+    trustLabel: 'Работаю с',
+    processLabel: 'Как я работаю',
+    pricingLabel: 'Форматы сотрудничества',
+    supportLabel: 'Поддержка',
+    contactTitle: 'Давайте разберём ваш процесс вживую.',
+  },
+};
+
 export default function LandingPage() {
   const { lang, setLang } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const content = landingContent[lang];
+  const content = landingLocalizedContent[lang];
 
-  const routeLangMatch = location.pathname.match(/^\/(sk|en)(?=\/|$)/);
-  const routeLangPrefix = routeLangMatch ? `/${routeLangMatch[1]}` : '';
+  const routeLangMatch = location.pathname.match(/^\/([a-z]{2})(?=\/|$)/);
+  const routeLangParam = routeLangMatch?.[1];
+  const routeLangPrefix = isSupportedLangParam(routeLangParam) ? `/${routeLangParam}` : '';
 
   const localPath = (path: string) => (routeLangPrefix ? `${routeLangPrefix}${path}` : path);
 
-  const switchLanguage = () => {
-    const nextLang = lang === 'sk' ? 'en' : 'sk';
+  const changeLanguage = (nextLang: Lang) => {
     setLang(nextLang);
-
-    if (routeLangPrefix) {
-      const pathname = location.pathname.replace(/^\/(sk|en)(?=\/|$)/, `/${nextLang}`);
-      navigate(`${pathname}${location.search}${location.hash}`, { replace: true });
-    }
+    const pathnameWithoutLang = routeLangPrefix ? location.pathname.replace(routeLangPrefix, '') || '/' : location.pathname || '/';
+    const normalizedPath = pathnameWithoutLang.startsWith('/') ? pathnameWithoutLang : `/${pathnameWithoutLang}`;
+    navigate(`/${nextLang}${normalizedPath === '/' ? '' : normalizedPath}${location.search}${location.hash}`, { replace: true });
   };
 
   const scrollTo = (id: string) => {
@@ -321,13 +418,20 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={switchLanguage}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-sm text-white/70 transition hover:border-white/20 hover:text-white"
-            >
+            <label className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-sm text-white/70 transition hover:border-white/20 hover:text-white">
               <Globe className="h-4 w-4" />
-              {lang === 'sk' ? 'EN' : 'SK'}
-            </button>
+              <select
+                value={lang}
+                onChange={(event) => changeLanguage(event.target.value as Lang)}
+                className="bg-transparent text-sm text-white outline-none"
+              >
+                {supportedLangs.map((item) => (
+                  <option key={item} value={item} className="bg-[#09101f] text-white">
+                    {languageMeta[item].nativeLabel}
+                  </option>
+                ))}
+              </select>
+            </label>
             <Button
               variant="outline"
               size="sm"
@@ -594,27 +698,28 @@ export default function LandingPage() {
         </section>
         <section id="support" className="py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
               <div className="rf-fade-up">
                 <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#d8ff4e]">{content.supportLabel}</p>
                 <h2 className="mt-4 max-w-xl font-heading text-4xl font-bold tracking-[-0.04em] text-white sm:text-5xl">{content.supportTitle}</h2>
                 <p className="mt-6 max-w-xl text-lg leading-8 text-white/65">{content.supportText}</p>
               </div>
+              <CircularOperationsClock lang={lang} />
+            </div>
 
-              <div className="grid gap-5 sm:grid-cols-3">
-                {content.supportCards.map((item, index) => (
-                  <div
-                    key={item.title}
-                    className={`rf-panel rounded-[1.75rem] p-6 rf-fade-up ${index === 0 ? 'rf-delay-1' : index === 1 ? 'rf-delay-2' : 'rf-delay-3'}`}
-                  >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                      <item.icon className="h-5 w-5 text-[#d8ff4e]" />
-                    </div>
-                    <h3 className="mt-5 font-heading text-lg font-semibold text-white">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-7 text-white/63">{item.detail}</p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-3">
+              {content.supportCards.map((item, index) => (
+                <div
+                  key={item.title}
+                  className={`rf-panel rounded-[1.75rem] p-6 rf-fade-up ${index === 0 ? 'rf-delay-1' : index === 1 ? 'rf-delay-2' : 'rf-delay-3'}`}
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+                    <item.icon className="h-5 w-5 text-[#d8ff4e]" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="mt-5 font-heading text-lg font-semibold text-white">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-white/63">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>

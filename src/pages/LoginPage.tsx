@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useLanguage } from '@/i18n/LanguageContext';
+import { isSupportedLangParam, languageMeta, supportedLangs, useLanguage } from '@/i18n/LanguageContext';
+import type { Lang } from '@/i18n/translations';
 import { Globe, Mail, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,18 +15,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const routeLangMatch = location.pathname.match(/^\/(sk|en)(?=\/|$)/);
-  const routeLangPrefix = routeLangMatch ? `/${routeLangMatch[1]}` : '';
+  const routeLangMatch = location.pathname.match(/^\/([a-z]{2})(?=\/|$)/);
+  const routeLangParam = routeLangMatch?.[1];
+  const routeLangPrefix = isSupportedLangParam(routeLangParam) ? `/${routeLangParam}` : '';
   const localPath = (path: string) => (routeLangPrefix ? `${routeLangPrefix}${path}` : path);
 
-  const handleLanguageToggle = () => {
-    const nextLang = lang === 'sk' ? 'en' : 'sk';
+  const handleLanguageChange = (nextLang: Lang) => {
     setLang(nextLang);
-
-    if (routeLangPrefix) {
-      const pathname = location.pathname.replace(/^\/(sk|en)(?=\/|$)/, `/${nextLang}`);
-      navigate(`${pathname}${location.search}${location.hash}`, { replace: true });
-    }
+    const pathnameWithoutLang = routeLangPrefix ? location.pathname.replace(routeLangPrefix, '') || '/' : location.pathname || '/';
+    const normalizedPath = pathnameWithoutLang.startsWith('/') ? pathnameWithoutLang : `/${pathnameWithoutLang}`;
+    navigate(`/${nextLang}${normalizedPath === '/' ? '' : normalizedPath}${location.search}${location.hash}`, { replace: true });
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -48,8 +47,10 @@ export default function LoginPage() {
           </div>
           <div className="space-y-6">
             <blockquote className="text-lg font-medium leading-relaxed opacity-90 max-w-md">
-              {lang === 'sk'
-                ? '"Cestovné príkazy a správy jednoducho, rýchlo a bez papierov."'
+              {lang === 'sk' || lang === 'cs'
+                ? lang === 'cs'
+                  ? '"Cestovní příkazy a zprávy jednoduše, rychle a bez papírů."'
+                  : '"Cestovné príkazy a správy jednoducho, rýchlo a bez papierov."'
                 : '"Travel orders and reports — simple, fast, and paperless."'}
             </blockquote>
             <div className="text-sm opacity-60 space-y-1">
@@ -63,13 +64,20 @@ export default function LoginPage() {
 
       <div className="flex-1 flex flex-col">
         <div className="flex items-center justify-end p-6 gap-3">
-          <button
-            onClick={handleLanguageToggle}
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <label className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <Globe className="h-4 w-4" />
-            {lang === 'sk' ? 'EN' : 'SK'}
-          </button>
+            <select
+              value={lang}
+              onChange={(event) => handleLanguageChange(event.target.value as Lang)}
+              className="bg-transparent outline-none"
+            >
+              {supportedLangs.map((item) => (
+                <option key={item} value={item}>
+                  {languageMeta[item].nativeLabel}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         <div className="flex-1 flex items-center justify-center px-6">
@@ -97,7 +105,7 @@ export default function LoginPage() {
               <div className="relative">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t" /></div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">{lang === 'sk' ? 'alebo' : 'or'}</span>
+                  <span className="bg-background px-2 text-muted-foreground">{lang === 'sk' || lang === 'cs' ? 'alebo' : 'or'}</span>
                 </div>
               </div>
 

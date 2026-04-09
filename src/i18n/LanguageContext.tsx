@@ -7,7 +7,17 @@ interface LanguageContextType {
   t: TranslationKey;
 }
 
-const SUPPORTED_LANGS: Lang[] = ['sk', 'en'];
+export const languageMeta: Record<Lang, { label: string; nativeLabel: string; locale: string }> = {
+  sk: { label: 'Slovak', nativeLabel: 'Slovenčina', locale: 'sk-SK' },
+  en: { label: 'English', nativeLabel: 'English', locale: 'en-GB' },
+  de: { label: 'German', nativeLabel: 'Deutsch', locale: 'de-DE' },
+  cs: { label: 'Czech', nativeLabel: 'Čeština', locale: 'cs-CZ' },
+  uk: { label: 'Ukrainian', nativeLabel: 'Українська', locale: 'uk-UA' },
+  pl: { label: 'Polish', nativeLabel: 'Polski', locale: 'pl-PL' },
+  ru: { label: 'Russian', nativeLabel: 'Русский', locale: 'ru-RU' },
+};
+
+const SUPPORTED_LANGS: Lang[] = ['sk', 'en', 'de', 'cs', 'uk', 'pl', 'ru'];
 
 const isSupportedLang = (value: string | null | undefined): value is Lang =>
   Boolean(value && SUPPORTED_LANGS.includes(value as Lang));
@@ -23,7 +33,8 @@ const getInitialLang = (): Lang => {
   }
 
   const browserLang = window.navigator.language.toLowerCase();
-  return browserLang.startsWith('sk') ? 'sk' : 'en';
+  const matchedLang = SUPPORTED_LANGS.find((lang) => browserLang.startsWith(lang));
+  return matchedLang ?? 'en';
 };
 
 const LanguageContext = createContext<LanguageContextType>({

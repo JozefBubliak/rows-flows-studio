@@ -3,8 +3,9 @@ import {
   LayoutDashboard, FileText, ClipboardList, Car, Receipt, User, LogOut, Globe, Home,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
-import { useLocation } from 'react-router-dom';
-import { useLanguage } from '@/i18n/LanguageContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { isSupportedLangParam, languageMeta, supportedLangs, useLanguage } from '@/i18n/LanguageContext';
+import type { Lang } from '@/i18n/translations';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, useSidebar,
@@ -15,14 +16,28 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
+  const navigate = useNavigate();
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
+  const routeLangMatch = location.pathname.match(/^\/([a-z]{2})(?=\/|$)/);
+  const routeLangParam = routeLangMatch?.[1];
+  const routeLangPrefix = isSupportedLangParam(routeLangParam) ? `/${routeLangParam}` : '';
+  const localPath = (path: string) => (routeLangPrefix ? `${routeLangPrefix}${path}` : path);
+
+  const handleLanguageChange = (nextLang: Lang) => {
+    setLang(nextLang);
+    if (!routeLangPrefix) {
+      return;
+    }
+    const pathnameWithoutLang = location.pathname.replace(routeLangPrefix, '') || '/';
+    navigate(`/${nextLang}${pathnameWithoutLang === '/' ? '' : pathnameWithoutLang}${location.search}${location.hash}`, { replace: true });
+  };
 
   const mainItems = [
-    { title: t.nav.dashboard, url: '/dashboard', icon: LayoutDashboard },
-    { title: t.nav.travelOrders, url: '/orders', icon: ClipboardList },
-    { title: t.nav.travelReports, url: '/reports', icon: FileText },
-    { title: t.nav.vehicles, url: '/vehicles', icon: Car },
-    { title: t.nav.settlement, url: '/settlement', icon: Receipt },
+    { title: t.nav.dashboard, url: localPath('/dashboard'), icon: LayoutDashboard },
+    { title: t.nav.travelOrders, url: localPath('/orders'), icon: ClipboardList },
+    { title: t.nav.travelReports, url: localPath('/reports'), icon: FileText },
+    { title: t.nav.vehicles, url: localPath('/vehicles'), icon: Car },
+    { title: t.nav.settlement, url: localPath('/settlement'), icon: Receipt },
   ];
 
   return (
@@ -44,7 +59,20 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-muted text-[10px] font-semibold uppercase tracking-[0.1em] px-4">
-            {!collapsed && (lang === 'sk' ? 'Hlavné menu' : 'Main Menu')}
+            {!collapsed &&
+              (lang === 'sk'
+                ? 'Hlavné menu'
+                : lang === 'cs'
+                  ? 'Hlavní menu'
+                  : lang === 'de'
+                    ? 'Hauptmenü'
+                    : lang === 'pl'
+                      ? 'Menu główne'
+                      : lang === 'uk'
+                        ? 'Головне меню'
+                        : lang === 'ru'
+                          ? 'Главное меню'
+                          : 'Main Menu')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -70,18 +98,27 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-sidebar-border p-3 space-y-2">
         {/* Language switch */}
-        <button
-          onClick={() => setLang(lang === 'sk' ? 'en' : 'sk')}
-          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-xs text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-        >
+        <label className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-xs text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
           <Globe className="h-3.5 w-3.5" />
-          {!collapsed && <span>{lang === 'sk' ? 'English' : 'Slovenčina'}</span>}
-        </button>
+          {!collapsed && (
+            <select
+              value={lang}
+              onChange={(event) => handleLanguageChange(event.target.value as Lang)}
+              className="w-full bg-transparent outline-none"
+            >
+              {supportedLangs.map((item) => (
+                <option key={item} value={item}>
+                  {languageMeta[item].nativeLabel}
+                </option>
+              ))}
+            </select>
+          )}
+        </label>
 
         {/* Profile */}
         <SidebarMenuButton asChild isActive={isActive('/profile')}>
           <NavLink
-            to="/profile"
+            to={localPath('/profile')}
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent"
             activeClassName="bg-sidebar-accent text-sidebar-accent-foreground"
           >
@@ -92,16 +129,32 @@ export function AppSidebar() {
 
         {/* Landing / About */}
         <NavLink
-          to="/"
+          to={routeLangPrefix || '/'}
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         >
           <Home className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>{lang === 'sk' ? 'O službe' : 'About'}</span>}
+          {!collapsed && (
+            <span>
+              {lang === 'sk'
+                ? 'O službe'
+                : lang === 'cs'
+                  ? 'O službě'
+                  : lang === 'de'
+                    ? 'Über den Service'
+                    : lang === 'pl'
+                      ? 'O usłudze'
+                      : lang === 'uk'
+                        ? 'Про сервіс'
+                        : lang === 'ru'
+                          ? 'О сервисе'
+                          : 'About'}
+            </span>
+          )}
         </NavLink>
 
         {/* Logout */}
         <NavLink
-          to="/login"
+          to={localPath('/login')}
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
         >
           <LogOut className="h-4 w-4 shrink-0" />
