@@ -14,10 +14,7 @@ import {
   ClipboardList,
   FileText,
   Receipt,
-  Car,
-  Sparkles,
-  ShieldCheck,
-  Zap,
+  Car
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import logoSrc from '@/assets/logo-rows-flows.png';
@@ -81,9 +78,9 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <nav className="sticky top-0 z-50 border-b border-border/70 bg-background/70 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <img src={logoSrc} alt="Rows & Flows" className="h-9 w-auto" />
+          <img src={logoSrc} alt="Rows & Flows" className="h-8 w-auto bg-transparent object-contain mix-blend-multiply" />
 
           <div className="hidden items-center gap-8 md:flex">
             {[
@@ -118,25 +115,16 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <section className="relative overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.18)_0%,_transparent_55%)]" />
-        <div className="absolute left-1/2 top-20 h-60 w-60 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
+      <section className="relative overflow-hidden border-b border-border/70">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_hsl(var(--primary)/0.15),_transparent_35%),radial-gradient(circle_at_80%_0%,_hsl(var(--primary)/0.12),_transparent_30%)]" />
+        <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-28">
+          <div className="mx-auto max-w-4xl space-y-8 text-center">
+            <img src={logoSrc} alt="Rows & Flows" className="mx-auto h-20 w-auto bg-transparent object-contain mix-blend-multiply" />
 
-        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              {lang === 'sk' ? 'Ultra-moderné workflow riešenie' : 'Ultra-modern workflow solution'}
-            </div>
+            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">{l.heroTitle}</h1>
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">{l.heroSubtitle}</p>
 
-            <div className="space-y-5">
-              <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-                {l.heroTitle}
-              </h1>
-              <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">{l.heroSubtitle}</p>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button onClick={() => navigate(localPath('/login'))} size="lg" variant="premium" className="gap-2 px-8 text-base">
                 {l.loginCta}
                 <ArrowRight className="h-4 w-4" />
@@ -146,27 +134,17 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-primary" />{lang === 'sk' ? 'Enterprise bezpečnosť' : 'Enterprise security'}</span>
-              <span className="inline-flex items-center gap-1.5"><Zap className="h-4 w-4 text-primary" />{lang === 'sk' ? 'Automatizácia procesov' : 'Process automation'}</span>
-            </div>
-          </div>
-
-          <div className="grid gap-4 rounded-3xl border border-primary/20 bg-card/80 p-6 shadow-card backdrop-blur">
-            {services.slice(0, 3).map((item, index) => {
-              const Icon = serviceIcons[index];
-              return (
-                <div key={item.title} className="flex items-start gap-3 rounded-xl border border-border/70 bg-background/70 p-4">
-                  <div className="mt-0.5 rounded-lg gradient-brand p-2">
-                    <Icon className="h-4 w-4 text-primary-foreground" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-semibold">{item.title}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
-                  </div>
+            <div className="mx-auto grid max-w-2xl grid-cols-2 gap-3 pt-6 sm:grid-cols-3">
+              {[
+                lang === 'sk' ? 'Bez papierov' : 'Paperless',
+                lang === 'sk' ? 'Schvaľovanie workflow' : 'Approval workflow',
+                lang === 'sk' ? 'Rýchle vyúčtovanie' : 'Fast settlement',
+              ].map((item) => (
+                <div key={item} className="rounded-xl border border-border bg-card/90 px-4 py-3 text-sm font-medium">
+                  {item}
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -175,7 +153,12 @@ export default function LandingPage() {
         <div className="mx-auto max-w-4xl space-y-6 px-6 text-center">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{l.aboutTitle}</h2>
           <p className="mx-auto max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">{l.aboutText}</p>
-          <a href="https://rowsandflows.eu" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80">
+          <a
+            href="https://rowsandflows.eu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+          >
             rowsandflows.eu <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
@@ -188,7 +171,7 @@ export default function LandingPage() {
             {services.map((s, i) => {
               const Icon = serviceIcons[i];
               return (
-                <div key={i} className="group space-y-4 rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-card-hover">
+                <div key={i} className="space-y-4 rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-card-hover">
                   <div className="flex h-11 w-11 items-center justify-center rounded-lg gradient-brand">
                     <Icon className="h-5 w-5 text-primary-foreground" />
                   </div>
@@ -209,7 +192,12 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
             {plans.map((plan, i) => (
-              <div key={i} className={`relative space-y-6 rounded-2xl border p-8 transition-all duration-300 ${plan.highlighted ? 'border-primary bg-card shadow-lg' : 'border-border bg-card hover:shadow-card-hover'}`}>
+              <div
+                key={i}
+                className={`relative space-y-6 rounded-2xl border p-8 transition-all duration-300 ${
+                  plan.highlighted ? 'border-primary bg-card shadow-lg' : 'border-border bg-card hover:shadow-card-hover'
+                }`}
+              >
                 {plan.highlighted && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full gradient-brand px-4 py-1 text-xs font-semibold text-primary-foreground">
                     {lang === 'sk' ? 'Najobľúbenejší' : 'Most Popular'}
@@ -289,7 +277,12 @@ export default function LandingPage() {
               </div>
               <div className="flex items-start gap-3">
                 <ExternalLink className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                <a href="https://rowsandflows.eu" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                <a
+                  href="https://rowsandflows.eu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
                   {l.contactWeb}
                 </a>
               </div>
@@ -312,7 +305,7 @@ export default function LandingPage() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-          <img src={logoSrc} alt="Rows & Flows" className="h-7 w-auto opacity-70" />
+          <img src={logoSrc} alt="Rows & Flows" className="h-7 w-auto bg-transparent object-contain mix-blend-multiply" />
           <p className="text-xs text-muted-foreground">{l.footerRights}</p>
           <Button onClick={() => navigate(localPath('/login'))} variant="ghost" size="sm" className="text-xs">
             {l.loginCta}
