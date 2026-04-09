@@ -3,28 +3,42 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { Globe, Mail, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const { t, lang, setLang } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showEmail, setShowEmail] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const routeLangMatch = location.pathname.match(/^\/(sk|en)(?=\/|$)/);
+  const routeLangPrefix = routeLangMatch ? `/${routeLangMatch[1]}` : '';
+  const localPath = (path: string) => (routeLangPrefix ? `${routeLangPrefix}${path}` : path);
+
+  const handleLanguageToggle = () => {
+    const nextLang = lang === 'sk' ? 'en' : 'sk';
+    setLang(nextLang);
+
+    if (routeLangPrefix) {
+      const pathname = location.pathname.replace(/^\/(sk|en)(?=\/|$)/, `/${nextLang}`);
+      navigate(`${pathname}${location.search}${location.hash}`, { replace: true });
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      navigate('/dashboard');
+      navigate(localPath('/dashboard'));
     }, 800);
   };
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Left panel - Brand */}
       <div className="hidden lg:flex lg:w-[45%] gradient-brand relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.1)_0%,_transparent_60%)]" />
         <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
@@ -47,12 +61,10 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right panel - Login */}
       <div className="flex-1 flex flex-col">
-        {/* Top bar */}
         <div className="flex items-center justify-end p-6 gap-3">
           <button
-            onClick={() => setLang(lang === 'sk' ? 'en' : 'sk')}
+            onClick={handleLanguageToggle}
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <Globe className="h-4 w-4" />
@@ -60,10 +72,8 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Login form */}
         <div className="flex-1 flex items-center justify-center px-6">
           <div className="w-full max-w-sm space-y-8">
-            {/* Mobile brand */}
             <div className="lg:hidden text-center mb-4">
               <h1 className="text-2xl font-bold font-display tracking-tight text-foreground">Rows & Flows</h1>
               <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase mt-1">Data & Automation Studio</p>
@@ -78,7 +88,7 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 className="w-full h-11 gap-2.5 font-medium"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(localPath('/dashboard'))}
               >
                 <svg className="h-5 w-5" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
                 {t.login.signInMicrosoft}
@@ -123,7 +133,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="p-6 text-center text-xs text-muted-foreground space-y-1">
           <p className="font-medium">Rows & Flows · Data & Automation Studio</p>
           <p>support@pracovneprikazy.sk · +421 944 133 167</p>
