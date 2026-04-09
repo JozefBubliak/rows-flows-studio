@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -115,19 +115,19 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
     @apply tracking-tight;
   }
 }
 
 @layer utilities {
   .text-display {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     @apply text-3xl font-bold tracking-tight;
   }
 
   .text-headline {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     @apply text-xl font-semibold tracking-tight;
   }
 
@@ -145,5 +145,91 @@
 
   .gradient-brand {
     background: var(--gradient-brand);
+  }
+
+  .rf-panel {
+    background:
+      linear-gradient(180deg, rgba(12, 18, 33, 0.78), rgba(5, 8, 22, 0.92));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(18px);
+  }
+
+  .rf-halo {
+    box-shadow:
+      0 0 0 1px rgba(216, 255, 78, 0.12),
+      0 40px 100px rgba(0, 0, 0, 0.45),
+      0 0 90px rgba(47, 124, 245, 0.12);
+  }
+
+  .rf-section-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-position: center;
+    background-size: 44px 44px;
+  }
+
+  .rf-marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+
+  .rf-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: rf-marquee 28s linear infinite;
+  }
+
+  .rf-float {
+    animation: rf-float 8s ease-in-out infinite;
+  }
+
+  .rf-fade-up {
+    animation: rf-fade-up 0.7s ease-out both;
+  }
+
+  .rf-delay-1 {
+    animation-delay: 0.08s;
+  }
+
+  .rf-delay-2 {
+    animation-delay: 0.16s;
+  }
+
+  .rf-delay-3 {
+    animation-delay: 0.24s;
+  }
+}
+
+@keyframes rf-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes rf-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes rf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
