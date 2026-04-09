@@ -1,14 +1,47 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { Globe, Mail, Phone, MapPin, ExternalLink, Shield, Clock, Headphones, ArrowRight, CheckCircle2, ClipboardList, FileText, Receipt, Car } from 'lucide-react';
+import {
+  Globe,
+  Mail,
+  Phone,
+  MapPin,
+  ExternalLink,
+  Clock,
+  Headphones,
+  ArrowRight,
+  CheckCircle2,
+  ClipboardList,
+  FileText,
+  Receipt,
+  Car,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import logoSrc from '@/assets/logo-rows-flows.png';
 
 export default function LandingPage() {
   const { t, lang, setLang } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const l = t.landing;
+
+  const routeLangMatch = location.pathname.match(/^\/(sk|en)(?=\/|$)/);
+  const routeLangPrefix = routeLangMatch ? `/${routeLangMatch[1]}` : '';
+
+  const localPath = (path: string) => (routeLangPrefix ? `${routeLangPrefix}${path}` : path);
+
+  const switchLanguage = () => {
+    const nextLang = lang === 'sk' ? 'en' : 'sk';
+    setLang(nextLang);
+
+    if (routeLangPrefix) {
+      const pathname = location.pathname.replace(/^\/(sk|en)(?=\/|$)/, `/${nextLang}`);
+      navigate(`${pathname}${location.search}${location.hash}`, { replace: true });
+    }
+  };
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -48,14 +81,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={logoSrc} alt="Rows & Flows" className="h-9 w-auto" />
-          </div>
+      <nav className="sticky top-0 z-50 border-b border-border/70 bg-background/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <img src={logoSrc} alt="Rows & Flows" className="h-9 w-auto" />
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-8 md:flex">
             {[
               { label: l.nav.about, id: 'about' },
               { label: l.nav.services, id: 'services' },
@@ -66,7 +96,7 @@ export default function LandingPage() {
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 {item.label}
               </button>
@@ -75,33 +105,39 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setLang(lang === 'sk' ? 'en' : 'sk')}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              onClick={switchLanguage}
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <Globe className="h-4 w-4" />
               {lang === 'sk' ? 'EN' : 'SK'}
             </button>
-            <Button onClick={() => navigate('/login')} size="sm" className="font-medium">
+            <Button onClick={() => navigate(localPath('/login'))} size="sm" className="font-medium">
               {l.loginCta}
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="relative max-w-6xl mx-auto px-6 py-24 md:py-32 lg:py-40">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <img src={logoSrc} alt="Rows & Flows" className="h-16 md:h-20 mx-auto" />
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-display tracking-tight leading-tight text-foreground">
-              {l.heroTitle}
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              {l.heroSubtitle}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Button onClick={() => navigate('/login')} size="lg" variant="premium" className="gap-2 px-8 text-base">
+      <section className="relative overflow-hidden border-b border-border/50">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.18)_0%,_transparent_55%)]" />
+        <div className="absolute left-1/2 top-20 h-60 w-60 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
+
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              {lang === 'sk' ? 'Ultra-moderné workflow riešenie' : 'Ultra-modern workflow solution'}
+            </div>
+
+            <div className="space-y-5">
+              <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+                {l.heroTitle}
+              </h1>
+              <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">{l.heroSubtitle}</p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button onClick={() => navigate(localPath('/login'))} size="lg" variant="premium" className="gap-2 px-8 text-base">
                 {l.loginCta}
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -109,48 +145,25 @@ export default function LandingPage() {
                 {l.contactCta}
               </Button>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* About */}
-      <section id="about" className="py-20 md:py-28 bg-muted/30">
-        <div className="max-w-4xl mx-auto px-6 text-center space-y-6">
-          <h2 className="text-2xl md:text-3xl font-bold font-display tracking-tight">{l.aboutTitle}</h2>
-          <p className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
-            {l.aboutText}
-          </p>
-          <a
-            href="https://rowsandflows.eu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors pt-2"
-          >
-            rowsandflows.eu
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        </div>
-      </section>
-
-      {/* Services */}
-      <section id="services" className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6 space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-2xl md:text-3xl font-bold font-display tracking-tight">{l.servicesTitle}</h2>
+            <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-primary" />{lang === 'sk' ? 'Enterprise bezpečnosť' : 'Enterprise security'}</span>
+              <span className="inline-flex items-center gap-1.5"><Zap className="h-4 w-4 text-primary" />{lang === 'sk' ? 'Automatizácia procesov' : 'Process automation'}</span>
+            </div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((s, i) => {
-              const Icon = serviceIcons[i];
+
+          <div className="grid gap-4 rounded-3xl border border-primary/20 bg-card/80 p-6 shadow-card backdrop-blur">
+            {services.slice(0, 3).map((item, index) => {
+              const Icon = serviceIcons[index];
               return (
-                <div
-                  key={i}
-                  className="group rounded-xl border border-border bg-card p-6 space-y-4 hover:shadow-card-hover hover:border-primary/20 transition-all duration-300"
-                >
-                  <div className="h-11 w-11 rounded-lg gradient-brand flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-primary-foreground" />
+                <div key={item.title} className="flex items-start gap-3 rounded-xl border border-border/70 bg-background/70 p-4">
+                  <div className="mt-0.5 rounded-lg gradient-brand p-2">
+                    <Icon className="h-4 w-4 text-primary-foreground" />
                   </div>
-                  <h3 className="text-base font-semibold text-card-foreground">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-semibold">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+                  </div>
                 </div>
               );
             })}
@@ -158,48 +171,66 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-20 md:py-28 bg-muted/30">
-        <div className="max-w-6xl mx-auto px-6 space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-2xl md:text-3xl font-bold font-display tracking-tight">{l.pricingTitle}</h2>
+      <section id="about" className="bg-muted/30 py-20 md:py-24">
+        <div className="mx-auto max-w-4xl space-y-6 px-6 text-center">
+          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{l.aboutTitle}</h2>
+          <p className="mx-auto max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">{l.aboutText}</p>
+          <a href="https://rowsandflows.eu" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary/80">
+            rowsandflows.eu <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </section>
+
+      <section id="services" className="py-20 md:py-24">
+        <div className="mx-auto max-w-6xl space-y-10 px-6">
+          <h2 className="text-center text-2xl font-bold tracking-tight md:text-3xl">{l.servicesTitle}</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {services.map((s, i) => {
+              const Icon = serviceIcons[i];
+              return (
+                <div key={i} className="group space-y-4 rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-card-hover">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg gradient-brand">
+                    <Icon className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-base font-semibold text-card-foreground">{s.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" className="bg-muted/30 py-20 md:py-24">
+        <div className="mx-auto max-w-6xl space-y-10 px-6">
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{l.pricingTitle}</h2>
             <p className="text-muted-foreground">{l.pricingSubtitle}</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
             {plans.map((plan, i) => (
-              <div
-                key={i}
-                className={`rounded-xl border p-8 space-y-6 transition-all duration-300 ${
-                  plan.highlighted
-                    ? 'border-primary bg-card shadow-elevated relative'
-                    : 'border-border bg-card hover:shadow-card-hover'
-                }`}
-              >
+              <div key={i} className={`relative space-y-6 rounded-2xl border p-8 transition-all duration-300 ${plan.highlighted ? 'border-primary bg-card shadow-lg' : 'border-border bg-card hover:shadow-card-hover'}`}>
                 {plan.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 gradient-brand text-primary-foreground text-xs font-semibold px-4 py-1 rounded-full">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full gradient-brand px-4 py-1 text-xs font-semibold text-primary-foreground">
                     {lang === 'sk' ? 'Najobľúbenejší' : 'Most Popular'}
                   </div>
                 )}
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold text-card-foreground">{plan.name}</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold font-display text-foreground">{plan.price}</span>
+                    <span className="text-3xl font-bold">{plan.price}</span>
                     {plan.period && <span className="text-sm text-muted-foreground">{plan.period}</span>}
                   </div>
                 </div>
                 <ul className="space-y-3">
                   {plan.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                       <span>{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Button
-                  onClick={() => scrollTo('contact')}
-                  variant={plan.highlighted ? 'premium' : 'outline'}
-                  className="w-full"
-                >
+                <Button onClick={() => scrollTo('contact')} variant={plan.highlighted ? 'premium' : 'outline'} className="w-full">
                   {l.planCta}
                 </Button>
               </div>
@@ -208,21 +239,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Support */}
-      <section id="support" className="py-20 md:py-28">
-        <div className="max-w-4xl mx-auto px-6 space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-2xl md:text-3xl font-bold font-display tracking-tight">{l.supportTitle}</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">{l.supportText}</p>
+      <section id="support" className="py-20 md:py-24">
+        <div className="mx-auto max-w-4xl space-y-10 px-6">
+          <div className="space-y-3 text-center">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{l.supportTitle}</h2>
+            <p className="mx-auto max-w-2xl text-muted-foreground">{l.supportText}</p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid gap-6 sm:grid-cols-3">
             {[
               { icon: Mail, title: l.supportEmail, detail: l.contactEmail },
               { icon: Phone, title: l.supportPhone, detail: l.supportSos },
               { icon: Clock, title: l.supportHours, detail: l.contactPhone },
             ].map((item, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-6 text-center space-y-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
+              <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-6 text-center">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                   <item.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-sm font-semibold text-card-foreground">{item.title}</h3>
@@ -233,52 +263,41 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Contact */}
-      <section id="contact" className="py-20 md:py-28 bg-muted/30">
-        <div className="max-w-4xl mx-auto px-6 space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-2xl md:text-3xl font-bold font-display tracking-tight">{l.contactTitle}</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+      <section id="contact" className="bg-muted/30 py-20 md:py-24">
+        <div className="mx-auto max-w-4xl space-y-10 px-6">
+          <h2 className="text-center text-2xl font-bold tracking-tight md:text-3xl">{l.contactTitle}</h2>
+          <div className="mx-auto grid max-w-2xl gap-8 sm:grid-cols-2">
             <div className="space-y-5">
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Rows & Flows</p>
                   <p className="text-sm text-muted-foreground">{l.contactAddress}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <a href="mailto:jozef.bubliak.rowsandflows.eu" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {l.contactEmail}
-                  </a>
-                </div>
+                <Mail className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <a href="mailto:jozef.bubliak.rowsandflows.eu" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  {l.contactEmail}
+                </a>
               </div>
               <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <a href="tel:+421944133167" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {l.contactPhone}
-                  </a>
-                </div>
+                <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <a href="tel:+421944133167" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  {l.contactPhone}
+                </a>
               </div>
               <div className="flex items-start gap-3">
-                <ExternalLink className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <a href="https://rowsandflows.eu" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    {l.contactWeb}
-                  </a>
-                </div>
+                <ExternalLink className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <a href="https://rowsandflows.eu" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  {l.contactWeb}
+                </a>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center space-y-4 p-8 rounded-xl border border-border bg-card">
+            <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border border-border bg-card p-8">
               <Headphones className="h-8 w-8 text-primary" />
-              <p className="text-sm text-muted-foreground text-center">
-                {lang === 'sk'
-                  ? 'Potrebujete pomoc alebo demo? Kontaktujte nás.'
-                  : 'Need help or a demo? Get in touch.'}
+              <p className="text-center text-sm text-muted-foreground">
+                {lang === 'sk' ? 'Potrebujete pomoc alebo demo? Kontaktujte nás.' : 'Need help or a demo? Get in touch.'}
               </p>
               <Button asChild variant="premium" size="sm" className="gap-2">
                 <a href="https://rowsandflows.eu/sk/kontakt#booking" target="_blank" rel="noopener noreferrer">
@@ -291,18 +310,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-border py-8">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src={logoSrc} alt="Rows & Flows" className="h-7 w-auto opacity-60" />
-          </div>
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
+          <img src={logoSrc} alt="Rows & Flows" className="h-7 w-auto opacity-70" />
           <p className="text-xs text-muted-foreground">{l.footerRights}</p>
-          <div className="flex items-center gap-4">
-            <Button onClick={() => navigate('/login')} variant="ghost" size="sm" className="text-xs">
-              {l.loginCta}
-            </Button>
-          </div>
+          <Button onClick={() => navigate(localPath('/login'))} variant="ghost" size="sm" className="text-xs">
+            {l.loginCta}
+          </Button>
         </div>
       </footer>
     </div>
