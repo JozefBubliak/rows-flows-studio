@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, Outlet, useLocation, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { LanguageProvider } from "@/i18n/LanguageContext";
+import { LanguageProvider, useLanguage, isSupportedLangParam } from "@/i18n/LanguageContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
@@ -19,7 +20,26 @@ import SettlementPage from "./pages/SettlementPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
+
 const queryClient = new QueryClient();
+
+function LangRouteSync() {
+  const { lang: paramLang } = useParams();
+  const { setLang } = useLanguage();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isSupportedLangParam(paramLang)) {
+      setLang(paramLang);
+    }
+  }, [paramLang, setLang]);
+
+  if (!isSupportedLangParam(paramLang)) {
+    return <Navigate to={location.pathname.replace(/^\/[^/]+/, "") || "/"} replace />;
+  }
+
+  return <Outlet />;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -31,6 +51,24 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
+
+            <Route path="/:lang" element={<LangRouteSync />}>
+              <Route index element={<LandingPage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route element={<AppLayout />}>
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="orders" element={<TravelOrdersPage />} />
+                <Route path="orders/new" element={<CreateOrderPage />} />
+                <Route path="orders/:id" element={<OrderDetailPage />} />
+                <Route path="reports" element={<TravelReportsPage />} />
+                <Route path="reports/new" element={<ReportWizardPage />} />
+                <Route path="reports/:id" element={<ReportDetailPage />} />
+                <Route path="vehicles" element={<VehiclesPage />} />
+                <Route path="settlement" element={<SettlementPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+              </Route>
+            </Route>
+
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/orders" element={<TravelOrdersPage />} />
@@ -43,6 +81,7 @@ const App = () => (
               <Route path="/settlement" element={<SettlementPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
